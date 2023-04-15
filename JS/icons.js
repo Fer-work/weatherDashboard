@@ -1,5 +1,3 @@
-let weatherSymbol = document.getElementById("weatherSymbol-1");
-
 const apiKey = "8379f224a8238289aa94fd39c3277518";
 const city = "Los Angeles";
 
@@ -26,12 +24,12 @@ const iconMap = {
   "50n": "50n.png",
 };
 
-fetch(
-  `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`
-)
-  .then((response) => response.json())
-  .then((data) => {
-    const iconCode = data.weather[0].icon;
-    const iconUrl = `${iconBaseUrl}${iconMap[iconCode]}`;
-    weatherSymbol.src = iconUrl;
-  });
+// fetch(
+//   `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}`
+// )
+//   .then((response) => response.json())
+//   .then((data) => {
+//     const iconCode = data.weather[0].icon;
+//     const iconUrl = `${iconBaseUrl}${iconMap[iconCode]}`;
+//     weatherSymbol.src = iconUrl;
+//   });
