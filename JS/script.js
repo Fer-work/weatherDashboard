@@ -2,29 +2,17 @@ let inputCity = document.getElementById("inputCity");
 let searchBtn = document.getElementById("searchBtn");
 const cardContainer = document.getElementById("cardContainer");
 const cardElements = document.querySelectorAll(".card");
-console.log(cardElements);
+
+/*
+  Sidebar container where the search history is stored
+*/
+const resultsContainer = document.querySelector(".resultsContainer");
 
 let lat;
 let lon;
 
-/* 
-<div class="card overflow-hidden bg-gray-500 text-white shadow sm:rounded-lg">
-  <div class="px-4 py-1 sm:px-6">
-    <h3 class="date text-base font-semibold leading-6 py-1">date 2</h3>
-    <img id="weatherSymbol" class="mt-1 max-w-2xl text-3xl pb-2">
-    </img>
-    <p id="cardDegrees">
-      Temp: <span>68 degrees F</span>
-    </p>
-    <p id="cardWind">
-      wind: <span>3.5 MPH</span>
-    </p>
-    <p id="cardHumidity">
-      humidity: <span>63%</span>
-    </p>
-  </div>
-</div>; 
-*/
+// search history object array
+let cityHistory = JSON.parse(window.localStorage.getItem("cityHistory")) || [];
 // get all of the cards to update their information
 function updateCards(filteredData) {
   cardElements.forEach((card, index) => {
@@ -49,68 +37,6 @@ function updateCards(filteredData) {
     cardHumidity.innerHTML = `Humidity: ${filteredData[index].main.humidity} %`;
   });
 }
-
-// function createCards(filteredData) {
-//   for (let i = 1; i < filteredData.length; i++) {
-//     const date = new Date(filteredData[i].dt_txt).toLocaleDateString();
-//     const iconCode = filteredData[i].weather[0].icon;
-//     const iconUrl = `${iconBaseUrl}${iconMap[iconCode]}`;
-
-//     // create the html elements
-
-//     // create the parent div
-//     const parentDiv = document.createElement("div");
-//     parentDiv.innerHTML = "";
-//     parentDiv.className =
-//       "card overflow-hidden bg-indigo-500 text-white shadow sm:rounded-lg";
-//     // an inner div for centering and padding
-//     const secondDiv = document.createElement("div");
-//     secondDiv.className = "px-4 py-1 sm:px-6";
-//     // the date displayed on the card
-//     const cardDate = document.createElement("h3");
-//     cardDate.className = "date text-base font-semibold leading-6 py-1";
-//     cardDate.textContent = date;
-//     // The weather symbol to be displayed on the card
-//     const weatherSymbol = document.createElement("img");
-//     weatherSymbol.className = "mt-1 max-w-2xl text-3xl pb-2";
-//     weatherSymbol.src = iconUrl;
-//     // the degrees to be displayed
-//     const degrees = document.createElement("p");
-//     degrees.innerHTML = `Temp: ${filteredData[i].main.temp} &#176;F`;
-//     // the wind speed to be displayed
-//     const cardWind = document.createElement("p");
-//     cardWind.innerHTML = `Wind: ${filteredData[i].wind.speed} MPH`;
-//     // the humidity to be displayed
-//     const cardHumidity = document.createElement("p");
-//     cardHumidity.innerHTML = `Humidity: ${filteredData[i].main.humidity} %`;
-
-//     secondDiv.appendChild(cardDate);
-//     secondDiv.appendChild(weatherSymbol);
-//     secondDiv.appendChild(degrees);
-//     secondDiv.appendChild(cardWind);
-//     secondDiv.appendChild(cardHumidity);
-
-//     console.log(secondDiv);
-//     parentDiv.appendChild(secondDiv);
-//     console.log(parentDiv);
-
-//     cardContainer.appendChild(parentDiv);
-
-//     // const weatherSymbol = card.querySelector(".weatherSymbol");
-//     // const cardDegrees = card.querySelector(".cardDegrees span");
-//     // const cardWind = card.querySelector(".cardWind span");
-//     // const cardHumidity = card.querySelector(".cardHumidity span");
-
-//     console.log(filteredData);
-//     // console.log(weatherSymbol);
-
-//     // weatherSymbol.innerHTML = `<i class="uil uil-${data.weather[0].icon}"></i>`;
-//     // cardDegrees.textContent = `Temp: ${data.main.temp} degrees F`;
-//     // cardWind.textContent = `wind: ${data.wind.speed} MPH`;
-//     // cardHumidity.textContent = `humidity: ${data.main.humidity}%`;
-//     // card.querySelector(".date").textContent = date;
-//   }
-// }
 
 function getCoordinates() {
   let city = inputCity.value;
@@ -142,14 +68,110 @@ function getCityInfo() {
           return index === 0 || date !== arr[index - 1].dt_txt.substring(0, 10); // compare only dates
         })
         .map((item) => ({ ...item, city: data.city })); // add city property to each item in filteredData
-      console.log(filteredData);
-      // console.log(data);
-      // updateHistory();
+      updateHistory(filteredData);
       updateCards(filteredData);
     });
 }
-//  function to update the html with weather data
-// function updateHistory() {}
+
+//  TODO: save the api call information to an object array with the filtered response data.
+// DONE: data is correctly saved in local storage.
+function updateHistory(filteredData) {
+  const apiCityName = filteredData[0].city.name;
+  var newCity = {
+    name: apiCityName,
+    items: [],
+  };
+  for (let index = 0; index < filteredData.length; index++) {
+    const dateVar = new Date(filteredData[index].dt_txt).toLocaleDateString();
+    const iconCode = filteredData[index].weather[0].icon;
+    const iconUrl = `${iconBaseUrl}${iconMap[iconCode]}`;
+    const temperature = filteredData[index].main.temp;
+    const windSpeed = filteredData[index].wind.speed;
+    const humidPercent = filteredData[index].main.humidity;
+
+    newCity.items.push({
+      date: dateVar,
+      icon: iconUrl,
+      temp: temperature,
+      wind: windSpeed,
+      humidity: humidPercent,
+    });
+  }
+
+  if (cityHistory.length > 0) {
+    for (let i = 0; i < cityHistory.length; i++) {
+      if (cityHistory[i].name === filteredData[0].city.name) {
+        alert("this city is already in local storage");
+        return;
+      }
+    }
+
+    // Add the new city to the array if it's not already in it
+    cityHistory.push(newCity);
+    localStorage.setItem("cityHistory", JSON.stringify(cityHistory));
+    updateSidebar(filteredData[0].city.name);
+  } else {
+    cityHistory.push(newCity);
+    localStorage.setItem("cityHistory", JSON.stringify(cityHistory));
+  }
+}
+
+// TODO: get the city names from local storage and show them on the sidebar where the history appears
+function displaySearchHistory() {
+  for (let i = 0; i < cityHistory.length; i++) {
+    const newSearch = document.createElement("button");
+    newSearch.className = "city w-full my-1 bg-gray-500 rounded-2xl";
+    newSearch.innerHTML = cityHistory[i].name;
+
+    resultsContainer.appendChild(newSearch);
+  }
+}
+
+function updateSidebar(newCity) {
+  const newSearch = document.createElement("button");
+  newSearch.className = "city w-full my-1 bg-gray-500 rounded-2xl";
+  newSearch.innerHTML = newCity;
+
+  resultsContainer.appendChild(newSearch);
+}
 
 // add event listener to search button
 searchBtn.addEventListener("click", getCoordinates);
+displaySearchHistory();
+
+let buttons = document.querySelectorAll(".city");
+
+buttons.forEach((button) => {
+  button.addEventListener("click", (event) => {
+    element = event.target;
+
+    for (let i = 0; i < cityHistory.length; i++) {
+      if (element.textContent == cityHistory[i].name) {
+        cardElements.forEach((card, index) => {
+          const dateVar = cityHistory[i].items[index].date;
+          const iconUrl = cityHistory[i].items[index].icon;
+          const temperature = cityHistory[i].items[index].temp;
+          const windSpeed = cityHistory[i].items[index].wind;
+          const humidPercent = cityHistory[i].items[index].humidity;
+
+          const cardDate = card.querySelector(".date");
+          const weatherSymbol = card.querySelector("#weatherSymbol");
+          const degrees = card.querySelector("#cardDegrees");
+          const cardWind = card.querySelector("#cardWind");
+          const cardHumidity = card.querySelector("#cardHumidity");
+          const cityName = card.querySelector("#cityName");
+
+          if (cityName !== null) {
+            cityName.textContent = `${cityHistory[i].name}:`;
+          }
+
+          cardDate.textContent = dateVar;
+          weatherSymbol.src = iconUrl;
+          degrees.innerHTML = `Temp: ${temperature} &#176;F`;
+          cardWind.innerHTML = `Wind: ${windSpeed} MPH`;
+          cardHumidity.innerHTML = `Humidity: ${humidPercent} %`;
+        });
+      }
+    }
+  });
+});

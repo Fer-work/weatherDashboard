@@ -1,5 +1,5 @@
 const apiKey = "8379f224a8238289aa94fd39c3277518";
-const city = "Los Angeles";
+// const city = "Los Angeles";
 
 const iconBaseUrl = "http://openweathermap.org/img/wn/";
 
