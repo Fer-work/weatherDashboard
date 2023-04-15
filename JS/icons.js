@@ -1,5 +1,4 @@
 const apiKey = "8379f224a8238289aa94fd39c3277518";
-// const city = "Los Angeles";
 
 const iconBaseUrl = "http://openweathermap.org/img/wn/";
 
@@ -23,13 +22,3 @@ const iconMap = {
   "13n": "13n.png",
   "50n": "50n.png",
 };
-
-// fetch(
-//   `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}`
-// )
-//   .then((response) => response.json())
-//   .then((data) => {
-//     const iconCode = data.weather[0].icon;
-//     const iconUrl = `${iconBaseUrl}${iconMap[iconCode]}`;
-//     weatherSymbol.src = iconUrl;
-//   });

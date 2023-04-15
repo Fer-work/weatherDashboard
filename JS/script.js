@@ -3,9 +3,6 @@ let searchBtn = document.getElementById("searchBtn");
 const cardContainer = document.getElementById("cardContainer");
 const cardElements = document.querySelectorAll(".card");
 
-/*
-  Sidebar container where the search history is stored
-*/
 const resultsContainer = document.querySelector(".resultsContainer");
 
 let lat;
@@ -73,7 +70,6 @@ function getCityInfo() {
     });
 }
 
-//  TODO: save the api call information to an object array with the filtered response data.
 // DONE: data is correctly saved in local storage.
 function updateHistory(filteredData) {
   const apiCityName = filteredData[0].city.name;
