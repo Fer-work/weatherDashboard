@@ -23,7 +23,7 @@ A weather dashboard that will run in the browser and feature dynamically updated
 
 ### Website
 
-https://fer-117.github.io/workDay-Scheduler/
+[https://fer-117.github.io/workDay-Scheduler/](https://fer-117.github.io/weatherDashboard/)
 
 ### The following image demonstrates the application:
 
