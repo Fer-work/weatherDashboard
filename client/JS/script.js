@@ -1,3 +1,9 @@
+import dotenv from "dotenv";
+import { iconBaseUrl, iconMap } from "./icons.js";
+dotenv.config();
+
+const apiKey = dotenv.API_KEY;
+
 let inputCity = document.getElementById("inputCity");
 let searchBtn = document.getElementById("searchBtn");
 const cardContainer = document.getElementById("cardContainer");

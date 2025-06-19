@@ -1,4 +1,5 @@
-const apiKey = "8379f224a8238289aa94fd39c3277518";
+import dotenv from "dotenv";
+dotenv.config();
 
 const iconBaseUrl = "http://openweathermap.org/img/wn/";
 
@@ -22,3 +23,5 @@ const iconMap = {
   "13n": "13n.png",
   "50n": "50n.png",
 };
+
+export { iconBaseUrl, iconMap };
