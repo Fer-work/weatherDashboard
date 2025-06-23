@@ -1,6 +1,3 @@
-import dotenv from "dotenv";
-dotenv.config();
-
 const iconBaseUrl = "http://openweathermap.org/img/wn/";
 
 const iconMap = {
