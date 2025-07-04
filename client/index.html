@@ -16,7 +16,9 @@ Using IDs for elements that are repeated (like #weatherSymbol) is invalid HTML a
     <title>Weather Dashboard</title>
   </head>
   <body>
-    <div class="header object-center bg-indigo-600">
+    <div
+      class="header object-center bg-gradient-to-r from-blue-500 to-indigo-600 shadow-md"
+    >
       <h1 class="text-center text-white text-2xl p-2 mb-2">
         Weather Dashboard
       </h1>
@@ -53,7 +55,7 @@ Using IDs for elements that are repeated (like #weatherSymbol) is invalid HTML a
           <!-- search button -->
           <button
             id="searchBtn"
-            class="bg-indigo-500 w-11/12 h-auto p-2 rounded-2xl my-2 flex justify-center items-center text-white font-medium"
+            class="bg-indigo-500 w-11/12 h-auto p-2 rounded-2xl my-2 flex justify-center items-center text-white font-medium hover:bg-indigo-600 transition-colors duration-300"
           >
             Search
           </button>
@@ -65,12 +67,14 @@ Using IDs for elements that are repeated (like #weatherSymbol) is invalid HTML a
 
         <!-- right section -->
         <div
-          class="displayWeather container bg-gray-100 col-span-2 sm:col-span-3 md:col-span-7 lg:col-span-9 px-1"
+          class="displayWeather container bg-red-100 h-full col-span-2 sm:col-span-3 md:col-span-7 lg:col-span-9 px-1"
         >
+          <!-- Today's Weather -->
           <div
-            class="card todayWeather border-2 border-indigo-500 p-2 rounded-lg"
+            class="card todayWeather border-2 border-gray-200 p-4 rounded-lg bg-white shadow-md"
           >
             <h1 class="py-1 text-xl font-bold flex items-center">
+              Today's weather:
               <span id="cityName" class="mx-1"></span>
               <span class="date mx-1"></span>
               <img
@@ -83,68 +87,25 @@ Using IDs for elements that are repeated (like #weatherSymbol) is invalid HTML a
             <p class="cardWind py-1 mx-1">Wind:</p>
             <p class="cardHumidity py-1 mx-1">Humidity:</p>
           </div>
+          <!-- Forecast Weather -->
           <div class="forecast">
             <div class="forecastTitle py-2 font-bold text-lg">
-              <h2 class="mx-1">5 day forecast:</h2>
-            </div>
-          </div>
-          <div
-            id="cardContainer"
-            class="container grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-1 text-white"
-          >
-            <div
-              class="card overflow-hidden bg-indigo-500 text-white shadow sm:rounded-lg"
-            >
-              <div class="px-4 py-1 sm:px-6">
-                <h3 class="date text-base font-semibold leading-6 py-1"></h3>
-                <img class="weatherSymbol mt-1 max-w-2xl text-3xl pb-2" />
-                <p class="cardDegrees">Temp: <span></span></p>
-                <p class="cardWind">wind: <span></span></p>
-                <p class="cardHumidity">humidity: <span></span></p>
-              </div>
+              <h2 class="m-1">5 day forecast:</h2>
             </div>
             <div
-              class="card overflow-hidden bg-indigo-500 text-white shadow sm:rounded-lg"
+              id="cardContainer"
+              class="container flex sm:flex-col md:flex-row gap-1 text-white"
             >
-              <div class="px-4 py-1 sm:px-6">
-                <h3 class="date text-base font-semibold leading-6 py-1"></h3>
-                <img class="weatherSymbol mt-1 max-w-2xl text-3xl pb-2" />
-                <p class="cardDegrees">Temp: <span></span></p>
-                <p class="cardWind">wind: <span></span></p>
-                <p class="cardHumidity">humidity: <span></span></p>
-              </div>
-            </div>
-            <div
-              class="card overflow-hidden bg-indigo-500 text-white shadow sm:rounded-lg"
-            >
-              <div class="px-4 py-1 sm:px-6">
-                <h3 class="date text-base font-semibold leading-6 py-1"></h3>
-                <img class="weatherSymbol mt-1 max-w-2xl text-3xl pb-2" />
-                <p class="cardDegrees">Temp: <span></span></p>
-                <p class="cardWind">wind: <span></span></p>
-                <p class="cardHumidity">humidity: <span></span></p>
-              </div>
-            </div>
-            <div
-              class="card overflow-hidden bg-indigo-500 text-white shadow sm:rounded-lg"
-            >
-              <div class="px-4 py-1 sm:px-6">
-                <h3 class="date text-base font-semibold leading-6 py-1"></h3>
-                <img class="weatherSymbol mt-1 max-w-2xl text-3xl pb-2" />
-                <p class="cardDegrees">Temp: <span></span></p>
-                <p class="cardWind">wind: <span></span></p>
-                <p class="cardHumidity">humidity: <span></span></p>
-              </div>
-            </div>
-            <div
-              class="card overflow-hidden bg-indigo-500 text-white shadow sm:rounded-lg"
-            >
-              <div class="px-4 py-1 sm:px-6">
-                <h3 class="date text-base font-semibold leading-6 py-1"></h3>
-                <img class="weatherSymbol mt-1 max-w-2xl text-3xl pb-2" />
-                <p class="cardDegrees">Temp: <span></span></p>
-                <p class="cardWind">wind: <span></span></p>
-                <p class="cardHumidity">humidity: <span></span></p>
+              <div
+                class="card overflow-hidden bg-indigo-500 text-white shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 sm:rounded-lg"
+              >
+                <div class="px-4 py-1 sm:px-6">
+                  <h3 class="date text-base font-semibold leading-6 py-1"></h3>
+                  <img class="weatherSymbol mt-1 max-w-2xl text-3xl pb-2" />
+                  <p class="cardDegrees">Temp: <span></span></p>
+                  <p class="cardWind">wind: <span></span></p>
+                  <p class="cardHumidity">humidity: <span></span></p>
+                </div>
               </div>
             </div>
           </div>

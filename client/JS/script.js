@@ -1,7 +1,3 @@
-// File: client/JS/script.js
-
-// We've removed the 'dotenv' import. That package is for Node.js (backend) and should not be in client-side code.
-// The API key is now safely stored on the server.
 import { iconBaseUrl, iconMap } from "./icons.js";
 
 // --- DOM Element Selection ---
@@ -36,21 +32,26 @@ function searchForCity() {
   // The frontend no longer knows or needs the API key.
   // We're using port 3001, which is where our Express server is running.
   fetch(`http://localhost:3001/api/weather/${city}`)
-    .then((response) => {
+    .then(async (response) => {
       // It's good practice to check if the response was successful (status code in the 200-299 range).
       // If not, we can handle the error from the server.
       if (!response.ok) {
         // The server will send back an error object (e.g., { error: "City not found" })
         // We throw an error here to jump to the .catch() block.
-        return response.json().then((err) => {
-          throw new Error(err.error || "Something went wrong");
-        });
+        const err = await response.json();
+        throw new Error(err.error || "Something went wrong");
       }
       return response.json();
     })
     .then((data) => {
       // The data structure received from our server is the same as the original OpenWeatherMap data.
       // So, the rest of the logic can remain very similar.
+
+      console.log("Raw data from fetch call: ", data);
+
+      const unfilteredData = data.list;
+
+      console.log("Data from the fetch call: ", unfilteredData);
 
       // We filter the data to get one forecast per day.
       const filteredData = data.list
@@ -60,6 +61,8 @@ function searchForCity() {
           return index === 0 || date !== arr[index - 1].dt_txt.substring(0, 10);
         })
         .map((item) => ({ ...item, city: data.city })); // Add city info to each forecast item.
+
+      console.log(filteredData);
 
       // Now we can update our UI and history with the processed data.
       updateHistory(filteredData);
@@ -74,44 +77,92 @@ function searchForCity() {
 }
 
 /**
- * Updates the weather cards on the screen with new forecast data.
+ * Creates and updates the weather cards on the screen with new forecast data.
  * This function's internal logic remains the same as it just renders data.
  * @param {Array} filteredData - An array of forecast objects for the upcoming days.
  */
 function updateCards(filteredData) {
-  // We need to update the main card and the 5-day forecast cards.
-  // Let's combine the main card with the other cards for easier processing.
-  const allCards = [document.querySelector(".todayWeather"), ...cardElements];
+  const todayCard = document.querySelector(".todayWeather");
+  const forecastContainer = document.getElementById("cardContainer");
 
-  allCards.forEach((card, index) => {
-    // Check if there's data for this card. API sometimes returns less than 6 days.
-    if (!filteredData[index] || !card) return;
+  // Clear old cards
+  forecastContainer.innerHTML = "";
 
-    const forecast = filteredData[index];
-    const date = new Date(forecast.dt_txt).toLocaleDateString();
-    const iconCode = forecast.weather[0].icon;
-    const iconUrl = `${iconBaseUrl}${iconMap[iconCode]}`;
+  // Update the "Today" card
+  const todayData = filteredData[0];
+  if (todayData) {
+    document.querySelector("#cityName").textContent = `${todayData.city.name}`;
+    todayCard.querySelector(".date").textContent = new Date(
+      todayData.dt_txt
+    ).toLocaleDateString();
+    todayCard.querySelector(".weatherSymbol").src = `${iconBaseUrl}${
+      iconMap[todayData.weather[0].icon]
+    }`;
+    todayCard.querySelector(
+      ".cardDegrees"
+    ).innerHTML = `Temp: ${todayData.main.temp} &#176;F`;
+    todayCard.querySelector(
+      ".cardWind"
+    ).innerHTML = `Wind: ${todayData.wind.speed} MPH`;
+    todayCard.querySelector(
+      ".cardHumidity"
+    ).innerHTML = `Humidity: ${todayData.main.humidity}%`;
+  }
 
-    // Use more specific selectors to avoid conflicts with shared IDs.
-    const cardDate = card.querySelector(".date");
-    const weatherSymbol = card.querySelector(".weatherSymbol"); // Use class selector
-    const degrees = card.querySelector(".cardDegrees"); // Use class selector
-    const cardWind = card.querySelector(".cardWind"); // Use class selector
-    const cardHumidity = card.querySelector(".cardHumidity"); // Use class selector
-    const cityNameEl = document.querySelector("#cityName"); // Main city name is separate
+  // Creating cards dynamically instead of updating on html file.
+  filteredData.forEach((entry) => {
+    const card = document.createElement("div");
+    card.className =
+      "card overflow-hidden bg-indigo-500 text-white shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 sm:rounded-lg flex-1 m-2";
+  });
 
-    // Update the main display's city name only for the first card.
-    if (index === 0 && cityNameEl) {
-      cityNameEl.textContent = `${forecast.city.name}:`;
-    }
+  // Get the rest of the forecast
+  const forecastData = filteredData.slice(1);
 
-    if (cardDate) cardDate.textContent = date;
-    if (weatherSymbol) weatherSymbol.src = iconUrl;
-    console.debug(iconUrl);
-    if (degrees) degrees.innerHTML = `Temp: ${forecast.main.temp} &#176;F`;
-    if (cardWind) cardWind.innerHTML = `Wind: ${forecast.wind.speed} MPH`;
-    if (cardHumidity)
-      cardHumidity.innerHTML = `Humidity: ${forecast.main.humidity} %`;
+  // Loop through each day of the remaining forecast data
+  forecastData.forEach((forecast) => {
+    // A. Create the main parent div for the card.
+    const card = document.createElement("div");
+    card.className =
+      "card overflow-hidden bg-indigo-500 text-white shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 sm:rounded-lg flex-1 m-2 p-4";
+
+    // B. Create the inner elements.
+
+    // Create the card date with classes
+    const cardDateElement = document.createElement("h3");
+    cardDateElement.className = "date text-base font-semibold leading-6 py-1";
+    cardDateElement.textContent = new Date(
+      forecast.dt_txt
+    ).toLocaleDateString();
+
+    // Create the card image with classes
+    const weatherSymbolElement = document.createElement("img");
+    weatherSymbolElement.className =
+      "weatherSymbol mt-1 max-w-2xl text-3xl pb-2";
+    weatherSymbolElement.src = `${iconBaseUrl}${
+      iconMap[forecast.weather[0].icon]
+    }`;
+
+    // Create the card degree text with classes
+    const degreesElement = document.createElement("p");
+    degreesElement.className = "cardDegrees";
+    degreesElement.innerHTML = `Temp: ${forecast.main.temp} &#176;F`;
+
+    const cardWindElement = document.createElement("p");
+    cardWindElement.cardWind = "cardWind";
+    cardWindElement.innerHTML = `Wind: ${forecast.wind.speed} MPH`;
+
+    const cardHumidityElement = document.createElement("p");
+    cardHumidityElement.cardHumidity = "cardHumidity";
+    cardHumidityElement.innerHTML = `Humidity: ${forecast.main.humidity} %`;
+
+    card.appendChild(cardDateElement);
+    card.appendChild(weatherSymbolElement);
+    card.appendChild(degreesElement);
+    card.appendChild(cardWindElement);
+    card.appendChild(cardHumidityElement);
+
+    forecastContainer.append(card);
   });
 }
 
