@@ -1,4 +1,8 @@
-const iconBaseUrl = "http://openweathermap.org/img/wn/";
+// File: client/JS/icons.js
+
+// The base URL for the weather icons has been updated to use secure HTTPS.
+// This resolves the "Mixed Content" warnings in the browser console.
+const iconBaseUrl = "https://openweathermap.org/img/wn/";
 
 const iconMap = {
   "01d": "01d.png",

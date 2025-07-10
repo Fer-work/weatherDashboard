@@ -47,11 +47,7 @@ function searchForCity() {
       // The data structure received from our server is the same as the original OpenWeatherMap data.
       // So, the rest of the logic can remain very similar.
 
-      console.log("Raw data from fetch call: ", data);
-
       const unfilteredData = data.list;
-
-      console.log("Data from the fetch call: ", unfilteredData);
 
       // We filter the data to get one forecast per day.
       const filteredData = data.list
@@ -61,8 +57,6 @@ function searchForCity() {
           return index === 0 || date !== arr[index - 1].dt_txt.substring(0, 10);
         })
         .map((item) => ({ ...item, city: data.city })); // Add city info to each forecast item.
-
-      console.log(filteredData);
 
       // Now we can update our UI and history with the processed data.
       updateHistory(filteredData);
