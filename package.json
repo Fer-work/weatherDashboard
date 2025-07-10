@@ -1,0 +1,35 @@
+{
+  "name": "weather-dashboard-fullstack",
+  "version": "1.0.0",
+  "description": "A full-stack weather dashboard with a Node.js backend and a vanilla JS frontend.",
+  "type": "module",
+  "main": "server/server.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "server": "node --watch server/server.js",
+    "test": "jest",
+    "test:e2e": "jest --testPathPattern=tests/e2e"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Fer-work/weatherDashboard.git"
+  },
+  "author": "Fernando Sanchez Gutierrez",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Fer-work/weatherDashboard/issues"
+  },
+  "homepage": "https://github.com/Fer-work/weatherDashboard#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2"
+  },
+  "devDependencies": {
+    "chromedriver": "^126.0.0",
+    "jest": "^29.7.0",
+    "selenium-webdriver": "^4.22.0"
+  }
+}

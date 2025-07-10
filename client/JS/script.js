@@ -31,7 +31,7 @@ function searchForCity() {
   // The server will then securely call the OpenWeatherMap API for us.
   // The frontend no longer knows or needs the API key.
   // We're using port 3001, which is where our Express server is running.
-  fetch(`http://localhost:3001/api/weather/${city}`)
+  fetch(`/api/weather/${city}`)
     .then(async (response) => {
       // It's good practice to check if the response was successful (status code in the 200-299 range).
       // If not, we can handle the error from the server.
