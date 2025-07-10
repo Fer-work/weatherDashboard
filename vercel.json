@@ -1,19 +1,20 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "server/server.js",
-      "use": "@vercel/node"
-    }
-  ],
   "routes": [
     {
+      "comment": "Route 1: Handle all API calls by sending them to the serverless function.",
       "src": "/api/(.*)",
       "dest": "/server/server.js"
     },
     {
-      "src": "/(.*)",
+      "comment": "Route 2: Serve any static files (like JS, CSS, images) from the client folder.",
+      "src": "/(.*\\.(js|css|ico|png|html))",
       "dest": "/client/$1"
+    },
+    {
+      "comment": "Route 3: For any other request, serve the main index.html file. This is the fallback that fixes the 404 error.",
+      "src": "/(.*)",
+      "dest": "/client/index.html"
     }
   ]
 }
