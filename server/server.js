@@ -35,3 +35,5 @@ app.listen(PORT, () => {
     `OpenWeather API key available: ${process.env.API_KEY ? "Yes" : "No"}`
   );
 });
+
+export default app;
