@@ -28,7 +28,9 @@
     "express": "^4.19.2"
   },
   "devDependencies": {
-    "chromedriver": "^126.0.0",
+    "@babel/core": "^7.28.0",
+    "@babel/preset-env": "^7.28.0",
+    "chromedriver": "^138.0.2",
     "jest": "^29.7.0",
     "selenium-webdriver": "^4.22.0"
   }
