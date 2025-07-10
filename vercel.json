@@ -6,12 +6,10 @@
       "dest": "/server/server.js"
     },
     {
-      "comment": "Route 2: Serve any static files (like JS, CSS, images) from the client folder.",
       "src": "/(.*\\.(js|css|ico|png|html))",
       "dest": "/client/$1"
     },
     {
-      "comment": "Route 3: For any other request, serve the main index.html file. This is the fallback that fixes the 404 error.",
       "src": "/(.*)",
       "dest": "/client/index.html"
     }
