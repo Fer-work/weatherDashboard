@@ -2,7 +2,6 @@
   "version": 2,
   "routes": [
     {
-      "comment": "Route 1: Handle all API calls by sending them to the serverless function.",
       "src": "/api/(.*)",
       "dest": "/server/server.js"
     },
