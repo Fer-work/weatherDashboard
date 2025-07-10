@@ -78,20 +78,20 @@ function searchForCity() {
 
 /**
  * Creates and updates the weather cards on the screen with new forecast data.
- * This function's internal logic remains the same as it just renders data.
  * @param {Array} filteredData - An array of forecast objects for the upcoming days.
  */
 function updateCards(filteredData) {
+  // Get references to the static "Today" card and the container for the 5-day forecast
   const todayCard = document.querySelector(".todayWeather");
   const forecastContainer = document.getElementById("cardContainer");
 
-  // Clear old cards
+  // Always clear the old forecast cards before adding new ones
   forecastContainer.innerHTML = "";
 
-  // Update the "Today" card
+  // Handle the Today card separately, as it already exists in the HTML
   const todayData = filteredData[0];
   if (todayData) {
-    document.querySelector("#cityName").textContent = `${todayData.city.name}`;
+    document.querySelector("#cityName").textContent = `${todayData.city.name}:`;
     todayCard.querySelector(".date").textContent = new Date(
       todayData.dt_txt
     ).toLocaleDateString();
@@ -106,63 +106,51 @@ function updateCards(filteredData) {
     ).innerHTML = `Wind: ${todayData.wind.speed} MPH`;
     todayCard.querySelector(
       ".cardHumidity"
-    ).innerHTML = `Humidity: ${todayData.main.humidity}%`;
+    ).innerHTML = `Humidity: ${todayData.main.humidity} %`;
   }
 
-  // Creating cards dynamically instead of updating on html file.
-  filteredData.forEach((entry) => {
-    const card = document.createElement("div");
-    card.className =
-      "card overflow-hidden bg-indigo-500 text-white shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 sm:rounded-lg flex-1 m-2";
-  });
-
-  // Get the rest of the forecast
+  // Get the data for the next 5 days by skipping the first item (today)
   const forecastData = filteredData.slice(1);
 
-  // Loop through each day of the remaining forecast data
+  // Loop through the 5-day forecast data to create cards dynamically
   forecastData.forEach((forecast) => {
-    // A. Create the main parent div for the card.
+    // 1. Create the main parent div for the card
     const card = document.createElement("div");
     card.className =
       "card overflow-hidden bg-indigo-500 text-white shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 sm:rounded-lg flex-1 m-2 p-4";
 
-    // B. Create the inner elements.
+    // 2. Create all the inner elements (date, icon, temp, etc.)
+    const dateEl = document.createElement("h3");
+    dateEl.className = "date text-base font-semibold leading-6 py-1";
+    dateEl.textContent = new Date(forecast.dt_txt).toLocaleDateString();
 
-    // Create the card date with classes
-    const cardDateElement = document.createElement("h3");
-    cardDateElement.className = "date text-base font-semibold leading-6 py-1";
-    cardDateElement.textContent = new Date(
-      forecast.dt_txt
-    ).toLocaleDateString();
+    const iconEl = document.createElement("img");
+    iconEl.className = "weatherSymbol mt-1 max-w-2xl text-3xl pb-2";
+    iconEl.src = `${iconBaseUrl}${iconMap[forecast.weather[0].icon]}`;
 
-    // Create the card image with classes
-    const weatherSymbolElement = document.createElement("img");
-    weatherSymbolElement.className =
-      "weatherSymbol mt-1 max-w-2xl text-3xl pb-2";
-    weatherSymbolElement.src = `${iconBaseUrl}${
-      iconMap[forecast.weather[0].icon]
-    }`;
+    const tempEl = document.createElement("p");
+    tempEl.className = "cardDegrees";
+    tempEl.innerHTML = `Temp: ${forecast.main.temp} &#176;F`;
 
-    // Create the card degree text with classes
-    const degreesElement = document.createElement("p");
-    degreesElement.className = "cardDegrees";
-    degreesElement.innerHTML = `Temp: ${forecast.main.temp} &#176;F`;
+    // CORRECTED: Use .className to assign classes
+    const windEl = document.createElement("p");
+    windEl.className = "cardWind";
+    windEl.innerHTML = `Wind: ${forecast.wind.speed} MPH`;
 
-    const cardWindElement = document.createElement("p");
-    cardWindElement.cardWind = "cardWind";
-    cardWindElement.innerHTML = `Wind: ${forecast.wind.speed} MPH`;
+    // CORRECTED: Use .className to assign classes
+    const humidityEl = document.createElement("p");
+    humidityEl.className = "cardHumidity";
+    humidityEl.innerHTML = `Humidity: ${forecast.main.humidity} %`;
 
-    const cardHumidityElement = document.createElement("p");
-    cardHumidityElement.cardHumidity = "cardHumidity";
-    cardHumidityElement.innerHTML = `Humidity: ${forecast.main.humidity} %`;
+    // 3. Append the inner elements to the card div in the correct order
+    card.appendChild(dateEl);
+    card.appendChild(iconEl);
+    card.appendChild(tempEl);
+    card.appendChild(windEl);
+    card.appendChild(humidityEl);
 
-    card.appendChild(cardDateElement);
-    card.appendChild(weatherSymbolElement);
-    card.appendChild(degreesElement);
-    card.appendChild(cardWindElement);
-    card.appendChild(cardHumidityElement);
-
-    forecastContainer.append(card);
+    // 4. Append the fully constructed card to the main forecast container
+    forecastContainer.appendChild(card);
   });
 }
 
