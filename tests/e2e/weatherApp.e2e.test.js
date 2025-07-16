@@ -33,6 +33,12 @@ describe("Weather Dashboard E2E Tests", () => {
   beforeEach(async () => {
     // Navigate to the page. Now we don't have to repeat this in every test!
     await weatherPage.navigate();
+
+    // Tell the driver to execute this JavaScript command inside the browser
+    await driver.executeScript("window.localStorage.clear()");
+
+    // Navigate again AFTER clearing storage to ensure the UI reflects the empty state
+    await weatherPage.navigate();
   });
 
   // --- City Search Tests ---
