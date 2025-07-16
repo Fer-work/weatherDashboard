@@ -59,8 +59,8 @@ function searchForCity() {
         .map((item) => ({ ...item, city: data.city })); // Add city info to each forecast item.
 
       // Now we can update our UI and history with the processed data.
-      updateHistory(filteredData);
-      updateCards(filteredData);
+      updateHistory(filteredData, city);
+      updateCards(filteredData, city);
     })
     .catch((error) => {
       // This will catch errors from the fetch call itself (e.g., network error)
@@ -74,7 +74,7 @@ function searchForCity() {
  * Creates and updates the weather cards on the screen with new forecast data.
  * @param {Array} filteredData - An array of forecast objects for the upcoming days.
  */
-function updateCards(filteredData) {
+function updateCards(filteredData, searchedCity) {
   // Get references to the static "Today" card and the container for the 5-day forecast
   const todayCard = document.querySelector(".todayWeather");
   const forecastContainer = document.getElementById("cardContainer");
@@ -85,7 +85,9 @@ function updateCards(filteredData) {
   // Handle the Today card separately, as it already exists in the HTML
   const todayData = filteredData[0];
   if (todayData) {
-    document.querySelector("#cityName").textContent = `${todayData.city.name}:`;
+    const displayCity =
+      searchedCity.charAt(0).toUpperCase() + searchedCity.slice(1);
+    document.querySelector("#cityName").textContent = `${displayCity}:`;
     todayCard.querySelector(".date").textContent = new Date(
       todayData.dt_txt
     ).toLocaleDateString();
@@ -153,8 +155,9 @@ function updateCards(filteredData) {
  * This function's internal logic is mostly the same.
  * @param {Array} filteredData - The processed forecast data, used to get the city name and save details.
  */
-function updateHistory(filteredData) {
-  const apiCityName = filteredData[0].city.name;
+function updateHistory(filteredData, searchedCity) {
+  const apiCityName =
+    searchedCity.charAt(0).toUpperCase() + searchedCity.slice(1).toLowerCase();
 
   // Check if the city is already in our history to avoid duplicates.
   const isAlreadyInHistory = cityHistory.some(
@@ -169,6 +172,8 @@ function updateHistory(filteredData) {
     name: apiCityName,
     items: [],
   };
+  // For Debugging
+  // console.log(`Api city name: ${apiCityName}`);
 
   // The 5-day forecast + today's weather
   const forecastDays = filteredData.slice(0, 6);

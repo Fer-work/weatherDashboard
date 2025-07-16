@@ -30,7 +30,7 @@ export const getWeatherByCity = async (req, res) => {
 
     // --- NEW: Better Logging & Error Handling ---
     // Let's log the actual response from the API. This is key for debugging!
-    console.log("Response from Geo API:", geoData);
+    // console.log("Response from Geo API:", geoData);
 
     // This is a more robust check. It looks at the HTTP status code.
     // If the status is 401, 404, etc., `ok` will be false.
