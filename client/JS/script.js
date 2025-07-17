@@ -31,7 +31,7 @@ function searchForCity() {
   // The server will then securely call the OpenWeatherMap API for us.
   // The frontend no longer knows or needs the API key.
   // We're using port 3001, which is where our Express server is running.
-  fetch(`/api/weather/${city}`)
+  fetch(`http://localhost:3001/api/weather/${city}`)
     .then(async (response) => {
       // It's good practice to check if the response was successful (status code in the 200-299 range).
       // If not, we can handle the error from the server.
@@ -50,7 +50,7 @@ function searchForCity() {
       const unfilteredData = data.list;
 
       // We filter the data to get one forecast per day.
-      const filteredData = data.list
+      const filteredData = unfilteredData
         .filter((item, index, arr) => {
           const date = item.dt_txt.substring(0, 10);
           // This logic ensures we only take the first entry for each new day.
@@ -58,6 +58,7 @@ function searchForCity() {
         })
         .map((item) => ({ ...item, city: data.city })); // Add city info to each forecast item.
 
+      console.log(city);
       // Now we can update our UI and history with the processed data.
       updateHistory(filteredData, city);
       updateCards(filteredData, city);
@@ -84,9 +85,21 @@ function updateCards(filteredData, searchedCity) {
 
   // Handle the Today card separately, as it already exists in the HTML
   const todayData = filteredData[0];
-  if (todayData) {
+
+  // Debugging
+  console.log(`todayData outside if: `, todayData);
+  console.log(`searchedCity outside if: ${searchedCity}`);
+  const cityToDisplay = searchedCity || todayData.city.name;
+
+  if (cityToDisplay) {
+    // Debugging
+    console.log(`cityToDisplay: ${cityToDisplay}`);
+
     const displayCity =
-      searchedCity.charAt(0).toUpperCase() + searchedCity.slice(1);
+      cityToDisplay.charAt(0).toUpperCase() + cityToDisplay.slice(1) ||
+      todayCard.city;
+    console.log(`displayCity: `, displayCity);
+
     document.querySelector("#cityName").textContent = `${displayCity}:`;
     todayCard.querySelector(".date").textContent = new Date(
       todayData.dt_txt

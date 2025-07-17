@@ -15,21 +15,19 @@ Using IDs for elements that are repeated (like #weatherSymbol) is invalid HTML a
     <script src="https://cdn.tailwindcss.com"></script>
     <title>Weather Dashboard</title>
   </head>
-  <body>
-    <div
-      class="header object-center bg-gradient-to-r from-blue-500 to-indigo-600 shadow-md"
-    >
-      <h1 class="text-center text-white text-2xl p-2 mb-2">
-        Weather Dashboard
-      </h1>
-    </div>
-    <div class="md:container md:mx-auto">
+  <body class="h-full w-full overflow-hidden">
+    <div class="m-2 p-2 rounded-2xl bg-blue-300 h-full w-100">
       <div
-        class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-9 lg:grid-cols-12 gap-2"
+        class="header text-center rounded-t-2xl bg-gradient-to-r from-blue-500 to-indigo-600 shadow-md"
       >
+        <h1 class="text-center text-white text-2xl p-2 mb-2">
+          Weather Dashboard
+        </h1>
+      </div>
+      <div class="rounded-b-2xl w-full flex flex-row w-full">
         <!-- left section -->
         <div
-          class="citySearch container flex flex-col items-center justify-start text-center bg-gray-100 mx-auto col-span-1 sm:col-span-1 md:col-span-2 lg:col-span-3"
+          class="citySearch flex flex-col h-100 mr-2 items-center text-center bg-blue-100 rounded-bl-2xl"
         >
           <div class="searchCityTitle text-xl m-2">
             <h2>Search for a City</h2>
@@ -67,22 +65,30 @@ Using IDs for elements that are repeated (like #weatherSymbol) is invalid HTML a
 
         <!-- right section -->
         <div
-          class="displayWeather container bg-red-100 h-full col-span-2 sm:col-span-3 md:col-span-7 lg:col-span-9 px-1"
+          class="displayWeather w-100 mx-auto h-100 p-2 rounded-br-2xl bg-gradient-to-r from-indigo-600 to-blue-500 flex-1"
         >
           <!-- Today's Weather -->
           <div
-            class="card todayWeather border-2 border-gray-200 p-4 rounded-lg bg-white shadow-md"
+            class="card todayWeather border-2 border-gray-200 p-4 rounded-lg bg-white shadow-md mx-auto w-100 items-center"
           >
-            <h1 class="py-1 text-xl font-bold flex items-center">
-              Today's weather:
-              <span id="cityName" class="mx-1"></span>
-              <span class="date mx-1"></span>
+            <div
+              class="todayBanner flex flex-row justify-center items-center bg-blue-100 rounded-2xl p-2"
+            >
+              <h1 class="p-2 mx-auto text-xl font-bold flex w-full">
+                Today's weather:
+              </h1>
               <img
-                class="weatherSymbol bg-gray-300 mx-2 rounded"
+                class="weatherSymbol mx-auto bg-gray-300 rounded"
                 src=""
                 alt="Weather icon"
               />
-            </h1>
+            </div>
+
+            <div class="todayTitle flex flex-row justify-center items-center">
+              <h2 id="cityName" class="mx-auto text-xl font-bold"></h2>
+              <h2 class="date mx-auto text-xl font-bold"></h2>
+            </div>
+
             <p class="cardDegrees py-1 mx-1">Temp:</p>
             <p class="cardWind py-1 mx-1">Wind:</p>
             <p class="cardHumidity py-1 mx-1">Humidity:</p>

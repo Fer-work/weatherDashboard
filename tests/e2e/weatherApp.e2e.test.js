@@ -41,6 +41,15 @@ describe("Weather Dashboard E2E Tests", () => {
     await weatherPage.navigate();
   });
 
+  afterEach(async () => {
+    try {
+      // Attempt to switch to an alert and accept it.
+      // This will clean up any unexpected alerts left open by a test,
+      // preventing them from causing the next test to fail.
+      await driver.switchTo().alert().accept();
+    } catch (error) {}
+  });
+
   // --- City Search Tests ---
   describe("City Search Feature", () => {
     test("Happy Path: User can search for a valid city (e.g., 'Tokyo')", async () => {
@@ -141,11 +150,17 @@ describe("Weather Dashboard E2E Tests", () => {
       // Search for two cities to ensure the history is populated
       await weatherPage.searchForCity("Madrid");
       await weatherPage.waitForResults();
+
+      // TODO: Fix this last automated test. Manual test is passing, showing the expected data.
+      await driver.sleep(1000); // Wait for 1 second
+
       await weatherPage.searchForCity("Rome");
       await weatherPage.waitForResults();
+      await driver.sleep(1000); // Wait for 1 second
 
       // Now click on the first city's history button
       await weatherPage.clickHistoryButton("Madrid");
+      await driver.sleep(1000); // Wait for 1 second
 
       const displayedCity = await weatherPage.getDisplayedCityName();
       expect(displayedCity).toContain("Madrid");
