@@ -4,6 +4,8 @@
 // This resolves the "Mixed Content" warnings in the browser console.
 const iconBaseUrl = "https://openweathermap.org/img/wn/";
 
+const defaultIcon = "01d.png";
+
 const iconMap = {
   "01d": "01d.png",
   "02d": "02d.png",
@@ -25,4 +27,4 @@ const iconMap = {
   "50n": "50n.png",
 };
 
-export { iconBaseUrl, iconMap };
+export { iconBaseUrl, iconMap, defaultIcon };

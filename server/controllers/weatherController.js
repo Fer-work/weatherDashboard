@@ -1,3 +1,4 @@
+// server/controllers/weatherController.js
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -13,7 +14,7 @@ const apiKey = process.env.API_KEY;
 export const getWeatherByCity = async (req, res) => {
   // We get the city name from the URL parameters (e.g., /api/weather/london -> req.params.city will be "london")
   const city = req.params.city;
-  console.debug(city);
+  console.log("City: ", city);
 
   // Basic validation to ensure a city was provided.
   if (!city) {
@@ -24,7 +25,7 @@ export const getWeatherByCity = async (req, res) => {
   // If anything inside the 'try' block fails, the 'catch' block will execute.
   try {
     // --- Step 1: Get Geographical Coordinates for the City ---
-    const geoUrl = `https://api.openweathermap.org/geo/1.0/direct?q=${city}&limit=1&appid=${apiKey}`;
+    const geoUrl = `https://api.openweathermap.org/geo/1.0/direct?q=${city}&limit=1&appid=${apiKey}&units=imperial`;
     const geoResponse = await fetch(geoUrl);
     const geoData = await geoResponse.json();
 
@@ -60,6 +61,44 @@ export const getWeatherByCity = async (req, res) => {
   } catch (error) {
     // If any error occurred in the 'try' block (e.g., network issue, API down),
     // we log the error on the server for debugging and send a generic error message to the client.
+    console.error("Internal Server Error:", error);
+    res
+      .status(500)
+      .json({ error: "Failed to fetch weather data. Please try again later." });
+  }
+};
+
+/**
+ * NEW: Controller function to get weather data for a given set of coordinates.
+ * @param {object} req - The Express request object. Expects 'lat' and 'lon' in the query string.
+ * @param {object} res - The Express response object.
+ */
+export const getWeatherByCoords = async (req, res) => {
+  const { lat, lon } = req.query;
+
+  if (!lat || !lon) {
+    return res
+      .status(400)
+      .json({ error: "Latitude and longitude query parameters are required" });
+  }
+
+  try {
+    // This is simpler than the city search because we already have the coordinates.
+    // We can call the forecast API directly.
+    const weatherUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=imperial`;
+    const weatherResponse = await fetch(weatherUrl);
+    const weatherData = await weatherResponse.json();
+
+    // Handle potential errors from the OpenWeatherMap API
+    if (!weatherResponse.ok) {
+      const errorMessage =
+        weatherData.message || "Could not fetch weather data for coordinates.";
+      return res.status(weatherResponse.status).json({ error: errorMessage });
+    }
+
+    // Send the final data back to the client
+    res.status(200).json(weatherData);
+  } catch (error) {
     console.error("Internal Server Error:", error);
     res
       .status(500)

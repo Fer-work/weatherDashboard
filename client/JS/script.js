@@ -1,4 +1,6 @@
-import { iconBaseUrl, iconMap } from "./icons.js";
+// client/JS/script.js
+
+import { iconBaseUrl, iconMap, defaultIcon } from "./icons.js";
 
 // --- DOM Element Selection ---
 const inputCity = document.getElementById("inputCity");
@@ -9,13 +11,86 @@ const cardContainer = document.getElementById("cardContainer");
 const cardElements = document.querySelectorAll(".card");
 const resultsContainer = document.querySelector(".resultsContainer");
 
-// We no longer need global 'lat' and 'lon' variables, as the server handles all of that.
-
 // --- State Management ---
 // Load search history from localStorage. This remains unchanged.
 let cityHistory = JSON.parse(window.localStorage.getItem("cityHistory")) || [];
 
 // --- Core Functions ---
+
+/**
+ * NEW: Sets a default state for the UI on page load.
+ */
+function initializeUI() {
+  // Find all image elements meant for weather symbols
+  const allWeatherSymbols = document.querySelectorAll(".weatherSymbol");
+  // Set their source to the default icon
+  allWeatherSymbols.forEach((img) => {
+    img.src = `${iconBaseUrl}${defaultIcon}`;
+  });
+}
+
+/**
+ * NEW: Fetches weather data from our backend using latitude and longitude.
+ * @param {number} lat - The latitude.
+ * @param {number} lon - The longitude.
+ */
+function fetchWeatherByCoords(lat, lon) {
+  // Call our new backend endpoint with the coordinate as query parameters
+  fetch(`/api/weather/coords?lat=${lat}&lon=${lon}`)
+    .then(async (response) => {
+      console.log(response);
+      if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.error || "Something went wront");
+      }
+      return response.json();
+    })
+    .then((data) => {
+      // We have the weather data, now process and display it
+      const filteredData = data.list
+        .filter((item, index, arr) => {
+          const date = item.dt_txt.substring(0, 10);
+          return index === 0 || date !== arr[index - 1].dt_txt.substring(0, 10);
+        })
+        .map((item) => ({ ...item, city: data.city }));
+
+      console.log("Filtered Data: ", filteredData);
+
+      // The API response from coordinates gives us a city name we can use for the history
+      const currentCityName = data.city.name;
+      updateHistory(filteredData, currentCityName);
+      updateCards(filteredData, currentCityName);
+    })
+    .catch((error) => {
+      console.error("Error fetching weather by coordinates: ", error);
+      alert(`Could not fetch weather for your location: ${error.message}`);
+    });
+}
+
+/**
+ * NEW: Asks the user for their location and fetches weather data if permission is granted.
+ */
+function getWeatherForCurrentLocation() {
+  // Check if the browser supports the Geolocation API
+  if ("geolocation" in navigator) {
+    navigator.geolocation.getCurrentPosition(
+      // Success Callback: This runs if the user clicks "Allow"
+      (position) => {
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
+        fetchWeatherByCoords(lat, lon);
+      },
+      // Error Callback: This runs if the user clicks "Block" or an error occurs
+      (error) => {
+        console.error("Geolocation error:", error);
+        // We don't show an alert here, as the user may have intentionally denied permission.
+        // The app will just wait for them to search manually.
+      }
+    );
+  } else {
+    console.log("Geolocation is not supported by this browser.");
+  }
+}
 
 /**
  * REFACTORED: This is the main function that now fetches weather data from OUR OWN backend.
@@ -31,7 +106,7 @@ function searchForCity() {
   // The server will then securely call the OpenWeatherMap API for us.
   // The frontend no longer knows or needs the API key.
   // We're using port 3001, which is where our Express server is running.
-  fetch(`http://localhost:3001/api/weather/${city}`)
+  fetch(`/api/weather/${city}`)
     .then(async (response) => {
       // It's good practice to check if the response was successful (status code in the 200-299 range).
       // If not, we can handle the error from the server.
@@ -270,5 +345,9 @@ inputCity.addEventListener("keyup", (event) => {
   }
 });
 
+// NEW: Set the default icons for the initial UI state
+initializeUI();
 // On page load, display the stored search history.
 displaySearchHistory();
+// NEW: Call the function to get the user's location when the page loads
+getWeatherForCurrentLocation();

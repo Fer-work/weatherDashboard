@@ -1,8 +1,15 @@
 import { Router } from "express";
-import { getWeatherByCity } from "../controllers/weatherController.js";
+import {
+  getWeatherByCity,
+  getWeatherByCoords,
+} from "../controllers/weatherController.js";
 
 // Create a new router instance. A router is like a mini-app, capable of having its own middleware and routes.
 const router = Router();
+
+// NEW: This route handles searches by coordinates (e.g., /api/weather/coords?lat=...&lon=...)
+// It's important this is defined before the "/:city" route
+router.get("/coords", getWeatherByCoords);
 
 // Define the route.
 // When a GET request is made to '/:city' (relative to where this router is mounted in server.js),
