@@ -38,7 +38,8 @@ function fetchWeatherByCoords(lat, lon) {
   // Call our new backend endpoint with the coordinate as query parameters
   fetch(`/api/weather/coords?lat=${lat}&lon=${lon}`)
     .then(async (response) => {
-      console.log(response);
+      // Debugging
+      // console.log(response);
       if (!response.ok) {
         const err = await response.json();
         throw new Error(err.error || "Something went wront");
@@ -54,7 +55,8 @@ function fetchWeatherByCoords(lat, lon) {
         })
         .map((item) => ({ ...item, city: data.city }));
 
-      console.log("Filtered Data: ", filteredData);
+      // Debugging
+      // console.log("Filtered Data: ", filteredData);
 
       // The API response from coordinates gives us a city name we can use for the history
       const currentCityName = data.city.name;
@@ -133,7 +135,8 @@ function searchForCity() {
         })
         .map((item) => ({ ...item, city: data.city })); // Add city info to each forecast item.
 
-      console.log(city);
+      // Debugging
+      // console.log(city);
       // Now we can update our UI and history with the processed data.
       updateHistory(filteredData, city);
       updateCards(filteredData, city);
@@ -162,18 +165,20 @@ function updateCards(filteredData, searchedCity) {
   const todayData = filteredData[0];
 
   // Debugging
-  console.log(`todayData outside if: `, todayData);
-  console.log(`searchedCity outside if: ${searchedCity}`);
+  // console.log(`todayData outside if: `, todayData);
+  // console.log(`searchedCity outside if: ${searchedCity}`);
   const cityToDisplay = searchedCity || todayData.city.name;
 
   if (cityToDisplay) {
     // Debugging
-    console.log(`cityToDisplay: ${cityToDisplay}`);
+    // console.log(`cityToDisplay: ${cityToDisplay}`);
 
     const displayCity =
       cityToDisplay.charAt(0).toUpperCase() + cityToDisplay.slice(1) ||
       todayCard.city;
-    console.log(`displayCity: `, displayCity);
+
+    // Debugging
+    // console.log(`displayCity: `, displayCity);
 
     document.querySelector("#cityName").textContent = `${displayCity}:`;
     todayCard.querySelector(".date").textContent = new Date(
@@ -329,7 +334,7 @@ function handleHistoryClick(event) {
       wind: { speed: item.wind },
       city: { name: cityData.name },
     }));
-    updateCards(formattedData);
+    updateCards(formattedData, cityName);
   }
 }
 

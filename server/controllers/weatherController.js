@@ -14,7 +14,8 @@ const apiKey = process.env.API_KEY;
 export const getWeatherByCity = async (req, res) => {
   // We get the city name from the URL parameters (e.g., /api/weather/london -> req.params.city will be "london")
   const city = req.params.city;
-  console.log("City: ", city);
+  // Debugging
+  // console.log("City: ", city);
 
   // Basic validation to ensure a city was provided.
   if (!city) {
@@ -59,9 +60,8 @@ export const getWeatherByCity = async (req, res) => {
     // --- Step 3: Send the Final Data to the Client ---
     res.status(200).json(weatherData);
   } catch (error) {
-    // If any error occurred in the 'try' block (e.g., network issue, API down),
-    // we log the error on the server for debugging and send a generic error message to the client.
-    console.error("Internal Server Error:", error);
+    // This will give us a much more detailed error in the Vercel logs
+    console.error("[getWeatherByCity] CRITICAL ERROR:", error);
     res
       .status(500)
       .json({ error: "Failed to fetch weather data. Please try again later." });
