@@ -26,7 +26,7 @@ export const getWeatherByCity = async (req, res) => {
   // If anything inside the 'try' block fails, the 'catch' block will execute.
   try {
     // --- Step 1: Get Geographical Coordinates for the City ---
-    const geoUrl = `https://api.openweathermap.org/geo/1.0/direct?q=${city}&limit=1&appid=${apiKey}&units=imperial`;
+    const geoUrl = `https://api.openweathermap.org/geo/1.0/direct?q=${city}&limit=1&appid=${apiKey}`;
     const geoResponse = await fetch(geoUrl);
     const geoData = await geoResponse.json();
 
